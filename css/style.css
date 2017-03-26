@@ -1,3 +1,8 @@
-body { background-color: #000; }
+body { background-color: #FAFAFA; padding: 3%;text-align: center;}
 
-h1 {color: red;}
+h1 {color: black;}
+
+table {border-collapse: collapse;}
+table,td,th {border: 1px solid black; padding: 8px}
+
+th {font-size: 20px;}

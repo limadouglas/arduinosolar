@@ -3,19 +3,28 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>SOLAR</title>
+    <title>PROJETO-SOLAR</title>
     <link rel="stylesheet" href="https://limadouglas.github.io/arduinosolar/css/style.css" />
+    <!---->
 </head>
 
 <body>
-    <h1>ola projeto solar!<h1/>
-        <form method="" action="enviar"><!---->
-            <input type="text" name="msg" /><!---->
-            <input type="button" name="btn" value="enviar" onclick="criarJson();" /><!---->
-        </form><!---->
+    <h1 margin="50%">PROJETO SOLAR
+        <h1/>
+        <hr align="center" width="80%" size="1" color="black">
+        <table id="tabela_log" align="center">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                </tr>
+            </tbody>
+        </table>
 
-        <div class="wrapper"></div>
-        <div id="retorno"></div>
+
+        <input type="button" name="btn" value="Motor1" onclick="criarJson('Motor1');" />
+        <input type="button" name="btn" value="Motor2" onclick="criarJson('Motor2');" />
+
 
         <!-- meu script com firebase -->
 
@@ -38,38 +47,58 @@
 
             function atualizarCont() {
                 refRaiz.on('value', function(snapshot) {
-                    cont = parseInt(snapshot.child("contador").val());
-                    console.log(cont);
+                    if (snapshot.child("contador").val() == null) {
+                        cont = 0;
+                        firebase.database().ref().update({
+                            'contador': [cont]
+                        });
+                    } else
+                        cont = parseInt(snapshot.child("contador").val());
                 });
             }
 
-            var starCountRef = firebase.database().ref("/log");
-            starCountRef.on('value', function(snapshot) {
-                snapshot.forEach(function(data) {
-                    printar("chave: " + data.key + " || valor: " + data.val());
-                    console.log(snapshot.child("log").numChildren() + 1);
+            var starCountRef;
+            var tabela = $('#tabela_log');
+
+            $(document).ready(function() {
+
+                atualizarCont();
+
+                starCountRef = firebase.database().ref("/log");
+                starCountRef.once('value').then(function(snapshot) {
+                    snapshot.forEach(function(data) {
+                        addTabela(data.key, data.val());
+                    });
                 });
+
             });
 
-            window.onload = function() {
-                //console.log("inicio");
-                printar("inicio");
-                atualizarCont();
+            function addTabela(chave, valor) {
+                var novaLinha = $("<tr>");
+                var coluna = "";
+                coluna += '<td>' + chave + '</td>';
+                coluna += '<td>' + valor + '</td>';
+                novaLinha.append(coluna);
+                tabela.append(novaLinha);
             }
 
-
-
-
-            function criarJson() {
-
+            function criarJson(msg) {
                 atualizarCont();
 
                 firebase.database().ref("log/").update({
-                    [++cont]: 'motor 1, direita'
+                    [++cont]: msg
                 });
 
                 firebase.database().ref().update({
                     'contador': [++cont]
+                });
+
+                starCountRef = firebase.database().ref("/log");
+                starCountRef.once('value').then(function(snapshot) {
+                    snapshot.forEach(function(data) {
+                        if (cont == data.key)
+                            addTabela(data.key, data.val());
+                    });
                 });
             }
 
