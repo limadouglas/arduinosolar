@@ -8,26 +8,20 @@
 </head>
 
 <body>
-    <h1>ola projeto solar!
-        <h1/>
-        <form method="" action="enviar">
-            <input type="text" name="msg" />
-            <input type="button" name="btn" value="enviar" onclick="criarJson();" />
-        </form>
-        
-        
-            <div class="wrapper"></div>
-            <div id="retorno"></div>
-       
+    <h1>ola projeto solar!<h1/>
+        <form method="" action="enviar"><!---->
+            <input type="text" name="msg" /><!---->
+            <input type="button" name="btn" value="enviar" onclick="criarJson();" /><!---->
+        </form><!---->
+
+        <div class="wrapper"></div>
+        <div id="retorno"></div>
+
         <!-- meu script com firebase -->
 
         <script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
-        
         <script type="text/javascript" src="script/jquery-3.2.0.min.js"></script>
-
         <script>
-            
-
             // Initialize Firebase
             var config = {
                 apiKey: "AIzaSyAk1_Id4Z7Z4-_gszdUW230qUtLzq8qcdQ",
@@ -38,20 +32,21 @@
             };
 
             firebase.initializeApp(config);
-            
+
             var cont;
-            var refRaiz = firebase.database().ref(); 
-            function atualizarCont() { 
+            var refRaiz = firebase.database().ref();
+
+            function atualizarCont() {
                 refRaiz.on('value', function(snapshot) {
-                    cont = parseInt(snapshot.child("contador").val());   
+                    cont = parseInt(snapshot.child("contador").val());
                     console.log(cont);
-                }); 
+                });
             }
-            
-            var starCountRef = firebase.database().ref("/log");  
-            starCountRef.on('value', function(snapshot){
+
+            var starCountRef = firebase.database().ref("/log");
+            starCountRef.on('value', function(snapshot) {
                 snapshot.forEach(function(data) {
-                printar("chave: "+ data.key + " || valor: " + data.val()); 
+                    printar("chave: " + data.key + " || valor: " + data.val());
                     console.log(snapshot.child("log").numChildren() + 1);
                 });
             });
@@ -61,24 +56,24 @@
                 printar("inicio");
                 atualizarCont();
             }
-            
 
-            
+
+
 
             function criarJson() {
-                
-                atualizarCont(); 
-                
+
+                atualizarCont();
+
                 firebase.database().ref("log/").update({
-                    [++cont] : 'motor 1, direita'
+                    [++cont]: 'motor 1, direita'
                 });
-                
+
                 firebase.database().ref().update({
-                   'contador' : [++cont] 
+                    'contador': [++cont]
                 });
             }
-            
-            
+
+
             function enviar() {
                 window.document.write("</br>chamou a funcao</br>");
             }
@@ -95,7 +90,6 @@
 
                 // Coloca a nova string(que é o HTML) no DOM
                 $wrapper.innerHTML = HTMLTemporario;
-
             }
 
         </script>
