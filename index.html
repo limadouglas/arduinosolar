@@ -1,11 +1,104 @@
 <!DOCKTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" href="https://limadouglas.github.io/arduinosolar/css/style.css" />
+
+<head>
+    <meta charset="utf-8" />
     <title>SOLAR</title>
-  </head>
-  <body>
-    <h1>ola projeto solar!<h1/>
-  </body>
+    <link rel="stylesheet" href="https://limadouglas.github.io/arduinosolar/css/style.css" />
+</head>
+
+<body>
+    <h1>ola projeto solar!
+        <h1/>
+        <form method="" action="enviar">
+            <input type="text" name="msg" />
+            <input type="button" name="btn" value="enviar" onclick="criarJson();" />
+        </form>
+        
+        
+            <div class="wrapper"></div>
+            <div id="retorno"></div>
+       
+        <!-- meu script com firebase -->
+
+        <script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
+        
+        <script type="text/javascript" src="script/jquery-3.2.0.min.js"></script>
+
+        <script>
+            
+
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyAk1_Id4Z7Z4-_gszdUW230qUtLzq8qcdQ",
+                authDomain: "solar-d6274.firebaseapp.com",
+                databaseURL: "https://solar-d6274.firebaseio.com",
+                storageBucket: "solar-d6274.appspot.com",
+                messagingSenderId: "966387592758"
+            };
+
+            firebase.initializeApp(config);
+            
+            var cont;
+            var refRaiz = firebase.database().ref(); 
+            function atualizarCont() { 
+                refRaiz.on('value', function(snapshot) {
+                    cont = parseInt(snapshot.child("contador").val());   
+                    console.log(cont);
+                }); 
+            }
+            
+            var starCountRef = firebase.database().ref("/log");  
+            starCountRef.on('value', function(snapshot){
+                snapshot.forEach(function(data) {
+                printar("chave: "+ data.key + " || valor: " + data.val()); 
+                    console.log(snapshot.child("log").numChildren() + 1);
+                });
+            });
+
+            window.onload = function() {
+                //console.log("inicio");
+                printar("inicio");
+                atualizarCont();
+            }
+            
+
+            
+
+            function criarJson() {
+                
+                atualizarCont(); 
+                
+                firebase.database().ref("log/").update({
+                    [++cont] : 'motor 1, direita'
+                });
+                
+                firebase.database().ref().update({
+                   'contador' : [++cont] 
+                });
+            }
+            
+            
+            function enviar() {
+                window.document.write("</br>chamou a funcao</br>");
+            }
+
+            function printar(msg) {
+                // Pega a string do conteúdo atual
+                var $wrapper = document.querySelector('.wrapper'),
+                    HTMLTemporario = $wrapper.innerHTML,
+                    // Novo HTML que será inserido
+                    HTMLNovo = '</br>' + msg + '</br>';
+
+                // Concatena as strings colocando o novoHTML antes do HTMLTemporario
+                HTMLTemporario = HTMLNovo + HTMLTemporario;
+
+                // Coloca a nova string(que é o HTML) no DOM
+                $wrapper.innerHTML = HTMLTemporario;
+
+            }
+
+        </script>
+</body>
+
 </html>
